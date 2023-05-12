@@ -8,11 +8,11 @@ var conn = new jsforce.Connection();
 var loggedIn = false;
 
 //For username / password flow
-var username = process.env.SALEFORCE_ACCOUNT_NAME || null;
-var password = process.env.SALEFORCE_ACCOUNT_PASSWORD || null;
-var token = process.env.SALEFORCE_ACCOUNT_TOKEN || null;
+var username = process.env.SALEFORCE_ACCOUNT_NAME || "namn81444@gmail.com";
+var password = process.env.SALEFORCE_ACCOUNT_PASSWORD || "Hainamh@123";
+var token = process.env.SALEFORCE_ACCOUNT_TOKEN || "HwhADCGml3IZDGikDo9nFXyFI";
 var production = process.env.SALEFORCE_ACCOUNT_PRODUCTION || true;
-var api_version = process.env.SALEFORCE_ACCOUNT_VERSION || "45.0";
+var api_version = process.env.SALEFORCE_ACCOUNT_VERSION || "57.0";
 var deployToWeb = process.env.deployToWeb || true;
 
 if (deployToWeb) {
