@@ -16,7 +16,7 @@ var api_version = process.env.SALEFORCE_ACCOUNT_VERSION || "57.0";
 var deployToWeb = process.env.deployToWeb || true;
 
 if (deployToWeb) {
-  var port = process.env.PORT || 3030;
+  var port = process.env.PORT || 8080;
   var express = require("express");
   var app = express();
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,6 +24,18 @@ if (deployToWeb) {
 
   app.get("/", function (req, res) {
     res.json({ status: "online" });
+  });
+
+  app.get("/contacts/", function (req, res) {
+    conn.query(
+      "SELECT Id, Name, FIELDS(CUSTOM) FROM Contact limit 200",
+      function (err, result) {
+        if (err) {
+          res.json(err);
+        }
+        res.json(result);
+      }
+    );
   });
 
   app.post("/email/confirm/", function (req, res) {
