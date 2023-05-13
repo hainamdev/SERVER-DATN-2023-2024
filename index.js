@@ -1,9 +1,6 @@
 require("dotenv").config();
 var jsforce = require("jsforce");
-var path = require("path");
 var bodyParser = require("body-parser");
-// var configpath = path.normalize("./");
-// var config = require(configpath + "config.js");
 var conn = new jsforce.Connection();
 
 //For username / password flow
