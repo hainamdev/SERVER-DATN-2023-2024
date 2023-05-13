@@ -1,11 +1,12 @@
 {
   "name": "jsforce-sfdc-sample",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a simple interactive demonstration of how to use Salesforce with Node.js via a library called jsforce.  jsforce can be run via command line or used with server side solutions like express.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +15,17 @@
     "dotenv": "^16.0.3",
     "express": "*",
     "jsforce": "1.9.1"
-  }
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hainamdev/Server-Send-Email.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/hainamdev/Server-Send-Email/issues"
+  },
+  "homepage": "https://github.com/hainamdev/Server-Send-Email#readme"
 }
