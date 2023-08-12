@@ -45,7 +45,7 @@ class UsersController {
                 return res.status(400).send("All input is required");
             }
             const result = await this.getUserByPhone(phone);
-            if(result || result?.error) return res.status(500).send("Internal Server Error: " + result.error);
+            if(!result || result?.error) return res.status(500).send("Internal Server Error when get user has same phone: " + result.error);
             const user = result?.totalSize > 0 ? result?.records[0] : null;
             if (user && (await bcrypt.compare(password, user.Password__c))) {
                 const token = jwt.sign(
@@ -70,7 +70,7 @@ class UsersController {
                 res.status(400).send("All input is required");
             }
             const result = await this.getUserByPhone(phone);
-            if(result ){
+            if(result){
                 const oldUser = result?.totalSize > 0 ? result?.records[0] : null;
                 if (oldUser) return res.status(409).send("User Already Exist. Please Login");
             }
