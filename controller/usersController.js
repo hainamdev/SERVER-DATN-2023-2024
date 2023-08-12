@@ -70,8 +70,13 @@ class UsersController {
                 res.status(400).send("All input is required");
             }
             const result = await this.getUserByPhone(phone);
+            const  = await this.getUserByEmail(email);
             if(result){
                 const oldUser = result?.totalSize > 0 ? result?.records[0] : null;
+                if (oldUser) return res.status(409).send("User Already Exist. Please Login");
+            }
+            if(result2){
+                const oldUser = result2?.totalSize > 0 ? result2?.records[0] : null;
                 if (oldUser) return res.status(409).send("User Already Exist. Please Login");
             }
             
@@ -114,6 +119,18 @@ class UsersController {
     getUserByPhone = async (phone) => {
         var rs = await salesforce.query(
             `SELECT ${this.defaultFields} FROM Users__c WHERE Phone__c = '${phone}'`,
+            (error, result) => {
+                if (error) {
+                    return {error : error};
+                }
+                return result;
+        });
+        return rs;
+    }
+
+    getUserByEmail = async (email) => {
+        var rs = await salesforce.query(
+            `SELECT ${this.defaultFields} FROM Users__c WHERE Email__c = '${email}'`,
             (error, result) => {
                 if (error) {
                     return {error : error};
