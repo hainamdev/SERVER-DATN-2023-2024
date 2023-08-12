@@ -11,7 +11,7 @@ const returnSuccess = (data, res) => {
 const returnError = (data, res) => {
     var result = {
         status : 400,
-        name : data?.Name
+        data : data
     }
     return  res.json(result);
 }
