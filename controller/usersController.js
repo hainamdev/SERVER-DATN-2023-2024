@@ -70,14 +70,14 @@ class UsersController {
                 res.status(400).send("All input is required");
             }
             const result = await this.getUserByPhone(phone);
-            const  = await this.getUserByEmail(email);
+            const result2 = await this.getUserByEmail(email);
             if(result){
                 const oldUser = result?.totalSize > 0 ? result?.records[0] : null;
-                if (oldUser) return res.status(409).send("User Already Exist. Please Login");
+                if (oldUser) return res.status(409).send("User Already Exist Phone. Please Login");
             }
             if(result2){
                 const oldUser = result2?.totalSize > 0 ? result2?.records[0] : null;
-                if (oldUser) return res.status(409).send("User Already Exist. Please Login");
+                if (oldUser) return res.status(409).send("User Already Exist Email. Please Login");
             }
             
             var encryptedPassword = await bcrypt.hash(password, 10);
