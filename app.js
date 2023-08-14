@@ -7,7 +7,19 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
+const allowedOrigins = ['http://localhost:3000'];
+
+// Config CORS
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH'],
+  allowedHeaders: '*',
+  exposedHeaders: '*',
+  credentials: true,
+  maxAge: 86400,
+  optionsSuccessStatus: 204,
+}));
 
 app.get("/", function (req, res) {
     res.json({ status: "online" });
