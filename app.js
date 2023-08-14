@@ -1,10 +1,13 @@
 require("dotenv").config();
 require("./config/loginSalesforce");
+const cors = require('cors');
 const express = require("express");
 const usersController = require('./controller/usersController');
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 
 app.get("/", function (req, res) {
     res.json({ status: "online" });
