@@ -5,6 +5,7 @@ const express = require("express");
 const usersController = require("./controller/usersController");
 const classController = require("./controller/classController");
 const hocSinhController = require("./controller/hocSinhController");
+const lessonController = require("./controller/lessonController");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -46,5 +47,10 @@ app.get("/class/:id", classController.getHocSinhByIDLop);
 //-----------------------------STUDENT-----------------------------//
 // lấy hoc sinh bằng Id
 app.get("/student/:id", hocSinhController.getHocSinhByID);
+
+//-----------------------------LESSON-----------------------------//
+// lấy báo bài bằng Id lớp
+app.get("/lesson/:idLop", lessonController.getAllLessonByIdLop);
+app.post("/lesson/save", lessonController.createLesson);
 
 module.exports = app;
