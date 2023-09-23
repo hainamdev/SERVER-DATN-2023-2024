@@ -3,7 +3,7 @@ const returnResult = require("../utils/utilReturnData");
 class LessonController {
   constructor() {
     this.defaultFields =
-      "Id, Name, CreatedDate, LastModifiedDate, Status__c, SentDay__c, IsAutoSent__c, Content__c, Title__c";
+      "Id, Name, CreatedDate, LastModifiedDate, Status__c, SentDay__c, 	SendTime__c, SendMinute__c, IsAutoSent__c, Content__c, Title__c";
   }
 
   getAllLessonById = async (req, res) => {
@@ -132,6 +132,8 @@ class LessonController {
         let autoLesson = {
           Name: lesson.Name,
           Id: lesson.Id,
+          SendTime__c: sendTime,
+          SendMinute__c: sendMinute
         };
         var body = { lesson: autoLesson, exp: conExp };
         await salesforce.apex.post(
