@@ -73,7 +73,7 @@ class LessonController {
         sendTime,
         sendMinute,
       } = req.body;
-      if (!(status && sentDay && content && title && classID)) {
+      if (!(sentDay && content && title && classID)) {
         res.status(400).send("All input is required");
       }
       var lesson = {
