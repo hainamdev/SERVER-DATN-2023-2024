@@ -6,11 +6,31 @@ class LessonController {
       "Id, Name, CreatedDate, LastModifiedDate, Status__c, SentDay__c, IsAutoSent__c, Content__c, Title__c";
   }
 
+  getAllLessonById = async (req, res) => {
+    try {
+      const id = req.params.id;
+      await salesforce.query(
+        `SELECT ${this.defaultFields} FROM Lesson__c WHERE Id = '${id}'`,
+        (error, result) => {
+          if (error) {
+            returnResult.returnError(error, res);
+          }
+          result.records.forEach((ls) => {
+            delete ls.attributes;
+          });
+          returnResult.returnSuccess(result, res);
+        }
+      );
+    } catch (error) {
+      returnResult.returnError(error, res);
+    }
+  };
+
   getAllLessonByIdLop = async (req, res) => {
     try {
       const idLop = req.params.idLop;
       await salesforce.query(
-        `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' Order by SentDay__c DESC`,
+        `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' ORDER BY SentDay__c DESC`,
         (error, result) => {
           if (error) {
             returnResult.returnError(error, res);
@@ -31,13 +51,9 @@ class LessonController {
       const { id } = req.body;
       salesforce.sobject("Lesson__c").destroy(id, function (err, ret) {
         if (err || !ret.success) {
-          return res
-          .status(500)
-          .send("Internal Server Error: " + err);
+          return res.status(500).send("Internal Server Error: " + err);
         }
-        return res
-        .status(200)
-        .send("Success");
+        return res.status(200).send("Success");
       });
     } catch (error) {
       returnResult.returnError(error, res);
