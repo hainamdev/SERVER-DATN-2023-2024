@@ -52,5 +52,6 @@ app.get("/student/:id", hocSinhController.getHocSinhByID);
 // lấy báo bài bằng Id lớp
 app.get("/lesson/:idLop", lessonController.getAllLessonByIdLop);
 app.post("/lesson/save", lessonController.createLesson);
+app.post("/lesson/delete", lessonController.deleteLesson);
 
 module.exports = app;
