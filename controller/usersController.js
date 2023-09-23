@@ -192,6 +192,20 @@ class UsersController {
       }
       delete teacher.records[0].attributes;
       rs.records[0] = { ...rs.records[0], Account: teacher.records[0] };
+      let classInfo = await salesforce.query(
+        `SELECT Id, Name, NumOfStudent__c, Status__c FROM ClassHeader__c WHERE GiaoVien__c = '${teacher.records[0].Id}' AND Status__c = 'Active'`,
+        (error, result) => {
+          if (error) {
+            return { error: error };
+          }
+          return result;
+        }
+      );
+      if (classInfo.error) {
+        return role;
+      }
+      delete classInfo.records[0].attributes;
+      rs.records[0] = { ...rs.records[0], Class: classInfo.records[0] };
     }
     delete rs.records[0].attributes;
     return rs;
