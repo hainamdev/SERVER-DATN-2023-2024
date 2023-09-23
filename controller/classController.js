@@ -1,5 +1,3 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const salesforce = require("../config/loginSalesforce").getConnection();
 const returnResult = require("../utils/utilReturnData");
 class ClassController {
@@ -24,7 +22,7 @@ class ClassController {
       if (rs.length) {
         let tmp = "'" + rs.join("','") + "'";
         listHocSinh = await salesforce.query(
-          `SELECT Id, Name FROM HocSinh__c WHERE Id IN (${tmp})`,
+          `SELECT Id, Ma_Hoc_Sinh__c, Name, NgaySinh__c, GioiTinh__c FROM HocSinh__c WHERE Id IN (${tmp})`,
           (error, result) => {
             if (error) return [];
             result.records.forEach((hs) => {
