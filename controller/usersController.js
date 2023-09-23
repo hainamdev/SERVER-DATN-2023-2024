@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const salesforce = require("../config/loginSalesforce").getConnection();
+const SalesforceConnection = require("../config/loginSalesforce");
 const returnResult = require("../utils/utilReturnData");
 class UsersController {
   constructor() {
@@ -9,6 +9,7 @@ class UsersController {
 
   getAllUser = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM Users__c`,
         (error, result) => {
@@ -24,8 +25,9 @@ class UsersController {
   };
 
   getUserbyId = async (req, res) => {
-    const id = req.params.id;
     try {
+      const id = req.params.id;
+      const salesforce = await SalesforceConnection.getConnection();
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM Users__c WHERE Id = '${id}'`,
         (error, result) => {
@@ -42,6 +44,7 @@ class UsersController {
 
   login = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       const { phone, password } = req.body;
       if (!(phone && password)) {
         return res.status(400).send("All input is required");
@@ -73,6 +76,7 @@ class UsersController {
 
   register = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       const { name, birthDay, email, gender, phone, password } = req.body;
       if (!(email && password && name && phone)) {
         res.status(400).send("All input is required");
@@ -134,6 +138,7 @@ class UsersController {
   };
 
   getUserByPhone = async (phone) => {
+    const salesforce = await SalesforceConnection.getConnection();
     var rs = await salesforce.query(
       `SELECT ${this.defaultFields} FROM Users__c WHERE Phone__c = '${phone}'`,
       (error, result) => {
@@ -211,6 +216,7 @@ class UsersController {
   };
 
   getUserByEmail = async (email) => {
+    const salesforce = await SalesforceConnection.getConnection();
     var rs = await salesforce.query(
       `SELECT ${this.defaultFields} FROM Users__c WHERE Email__c = '${email}'`,
       (error, result) => {

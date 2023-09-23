@@ -1,11 +1,11 @@
-const salesforce = require("../config/loginSalesforce").getConnection();
+const SalesforceConnection = require("../config/loginSalesforce");
 const returnResult = require("../utils/utilReturnData");
 class ClassController {
-  constructor() {
-  }
+  constructor() {}
 
   getHocSinhByIDLop = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       const id = req.params.id;
       let listHocSinh = [];
       let rs = [];

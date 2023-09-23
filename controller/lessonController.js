@@ -1,4 +1,4 @@
-const salesforce = require("../config/loginSalesforce").getConnection();
+const SalesforceConnection = require("../config/loginSalesforce");
 const returnResult = require("../utils/utilReturnData");
 class LessonController {
   constructor() {
@@ -8,12 +8,13 @@ class LessonController {
 
   getAllLessonById = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       const id = req.params.id;
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM Lesson__c WHERE Id = '${id}'`,
         (error, result) => {
           if (error) {
-            returnResult.returnError(error, res);
+            return;
           }
           result.records.forEach((ls) => {
             delete ls.attributes;
@@ -28,6 +29,7 @@ class LessonController {
 
   getAllLessonByIdLop = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       const idLop = req.params.idLop;
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' ORDER BY SentDay__c DESC`,
@@ -48,6 +50,7 @@ class LessonController {
 
   deleteLesson = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       const { id } = req.body;
       salesforce.sobject("Lesson__c").destroy(id, function (err, ret) {
         if (err || !ret.success) {
@@ -62,6 +65,7 @@ class LessonController {
 
   createLesson = async (req, res) => {
     try {
+      const salesforce = await SalesforceConnection.getConnection();
       const {
         status,
         sentDay,
@@ -133,7 +137,7 @@ class LessonController {
           Name: lesson.Name,
           Id: lesson.Id,
           SendTime__c: sendTime,
-          SendMinute__c: sendMinute
+          SendMinute__c: sendMinute,
         };
         var body = { lesson: autoLesson, exp: conExp };
         await salesforce.apex.post(
