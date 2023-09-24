@@ -25,16 +25,22 @@ class SalesforceConnection {
     });
   }
 
+  
   async getConnection() {
-    if (!this.conn?.accessToken) {
+    this.conn = null;
+    if (!this.conn?.accessToken) { 
+      ultilLogMessage.consoleLogBoxMessage("Processing.......");
       await this.setupConnection();
+      ultilLogMessage.consoleLogBoxMessage("Complete Login");
       return this.conn;
     } else {
       try {
         await this.conn.identity();
         return this.conn;
       } catch (error) {
+        ultilLogMessage.consoleLogBoxMessage("Processing.......");
         await this.setupConnection();
+        ultilLogMessage.consoleLogBoxMessage("Complete Login");
         return this.conn;
       }
     }

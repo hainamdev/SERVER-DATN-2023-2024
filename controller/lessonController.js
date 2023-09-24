@@ -32,7 +32,7 @@ class LessonController {
       const salesforce = await SalesforceConnection.getConnection();
       const idLop = req.params.idLop;
       await salesforce.query(
-        `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' ORDER BY SentDay__c DESC`,
+        `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' ORDER BY LastModifiedDate DESC`,
         (error, result) => {
           if (error) {
             returnResult.returnError(error, res);
