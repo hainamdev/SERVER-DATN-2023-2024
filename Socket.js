@@ -1,14 +1,24 @@
 const { Server } = require("socket.io");
 
-let io = new Server({
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    allowedHeaders: "*",
-    exposedHeaders: "*",
-    credentials: true,
-  },
+const io = new Server(server, {
+    cors: {
+        origin: true,
+        credentials: true,
+        methods: ["GET", "POST"],
+        allowedHeaders: "*",
+        exposedHeaders: "*",
+    },
+    allowEIO3: true,
 });
+// let io = new Server({
+//   cors: {
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+//     allowedHeaders: "*",
+//     exposedHeaders: "*",
+//     credentials: true,
+//   },
+// });
 
 const socketApi = { io: io };
 
