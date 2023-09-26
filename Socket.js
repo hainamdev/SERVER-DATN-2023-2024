@@ -1,14 +1,14 @@
 const { Server } = require("socket.io");
 
-const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:3000",
-        credentials: true,
-        methods: ["GET", "POST"],
-        allowedHeaders: "*",
-        exposedHeaders: "*",
-    },
-    allowEIO3: true,
+const io = new Server({
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST"],
+    allowedHeaders: "*",
+    exposedHeaders: "*",
+  },
+  allowEIO3: true,
 });
 // let io = new Server({
 //   cors: {
