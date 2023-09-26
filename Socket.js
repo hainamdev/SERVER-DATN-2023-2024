@@ -4,6 +4,8 @@ let io = new Server({
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+    allowedHeaders: "*",
+    exposedHeaders: "*",
     credentials: true,
   },
 });
