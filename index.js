@@ -1,11 +1,13 @@
-const http = require("http");
 const app = require("./app");
-const server = http.createServer(app);
-const ultilLogMessage = require('./utils/ultilLogMessage');
-
-const { API_PORT } = process.env;
+const server = require("http").Server(app);
+const ultilLogMessage = require("./utils/ultilLogMessage");
+const socketApi = require('./Socket')
 const port = process.env.PORT || 8080;
-// server listening 
+
+socketApi.io.attach(server);
+
+// server listening
 server.listen(port, () => {
   ultilLogMessage.consoleLogBoxMessage("Server run on port: " + port);
 });
+

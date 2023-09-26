@@ -7,6 +7,7 @@ class ClassController {
     try {
       const salesforce = await SalesforceConnection.getConnection();
       const id = req.params.id;
+      if(!id) return res.status(500).send("Data request is nothing");
       let listHocSinh = [];
       let rs = [];
       await salesforce.query(

@@ -1,6 +1,6 @@
 const returnSuccess = (data, res) => {
     const statusCode = data.done ? 200 : 500;
-    console.log(data);
+    // console.log(data);
     var result = {
         status : statusCode,
         data : [...data?.records]
