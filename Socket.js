@@ -3,6 +3,7 @@ const { Server } = require("socket.io");
 let io = new Server({
   cors: {
     origin: "http://localhost:3000",
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
     credentials: true,
   },
 });
