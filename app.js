@@ -60,7 +60,7 @@ app.post("/notify/save-lesson-auto", (req, res) => {
     console.log(req.body);
     return res.status(200).json({
       status: 200,
-      data: req.body,
+      message: 'SUCCESS'
     });
 });
 
