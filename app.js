@@ -55,4 +55,13 @@ app.get("/lesson/id/:id", lessonController.getAllLessonById);
 app.post("/lesson/save", lessonController.createLesson);
 app.post("/lesson/delete", lessonController.deleteLesson);
 
+//-----------------------------SALESFORCE-----------------------------//
+app.post("/notify/save-lesson-auto", (req, res) => {
+    console.log(req.body);
+    return res.status(200).json({
+      status: 200,
+      data: req.body,
+    });
+});
+
 module.exports = app;
