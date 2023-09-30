@@ -44,19 +44,16 @@ class UsersController {
 
   login = async (req, res) => {
     try {
-      const salesforce = await SalesforceConnection.getConnection();
       const { phone, password } = req.body;
       if (!(phone && password)) {
         return res.status(400).send("All input is required");
       }
       const result = await this.getUserByPhone(phone);
+      console.log(result);
       if (!result || result?.error)
         return res
           .status(500)
-          .send(
-            "Internal Server Error when get user has same phone: " +
-              result.error
-          );
+          .send("Internal Server Error when get user has same phone");
       const user = result?.totalSize > 0 ? result?.records[0] : null;
       if (user && (await bcrypt.compare(password, user.Password__c))) {
         const token = jwt.sign(
@@ -139,7 +136,7 @@ class UsersController {
 
   getUserByPhone = async (phone) => {
     const salesforce = await SalesforceConnection.getConnection();
-    var rs = await salesforce.query(
+    let rs = await salesforce.query(
       `SELECT ${this.defaultFields} FROM Users__c WHERE Phone__c = '${phone}'`,
       (error, result) => {
         if (error) {
@@ -148,8 +145,8 @@ class UsersController {
         return result;
       }
     );
-    if (rs.error) {
-      return rs;
+    if (!rs.records.length || rs.error) {
+      return rs.error ? rs : { error: " " };
     }
 
     let userRole = await salesforce.query(
@@ -162,8 +159,8 @@ class UsersController {
       }
     );
 
-    if (userRole.error) {
-      return userRole;
+    if (!userRole.records.length || userRole.error) {
+      return userRole.error ? userRole : { error: " " };
     }
 
     let role = await salesforce.query(
@@ -176,8 +173,8 @@ class UsersController {
       }
     );
 
-    if (role.error) {
-      return role;
+    if (!role.records.length || role.error) {
+      return role.error ? role : { error: " " };
     }
     delete role.records[0].attributes;
     rs.records[0] = { ...rs.records[0], Role: role.records[0] };
@@ -191,8 +188,8 @@ class UsersController {
           return result;
         }
       );
-      if (teacher.error) {
-        return role;
+      if (!teacher.records.length || teacher.error) {
+        return teacher.error ? teacher : { error: " " };
       }
       delete teacher.records[0].attributes;
       rs.records[0] = { ...rs.records[0], Account: teacher.records[0] };
@@ -205,8 +202,8 @@ class UsersController {
           return result;
         }
       );
-      if (classInfo.error) {
-        return role;
+      if (!classInfo || classInfo.error) {
+        return classInfo.error ? classInfo : { error: " " };
       }
       delete classInfo.records[0].attributes;
       rs.records[0] = { ...rs.records[0], Class: classInfo.records[0] };
