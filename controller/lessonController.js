@@ -117,7 +117,7 @@ class LessonController {
         if (newLessionCreate?.error)
           return res
             .status(500)
-            .send("Internal Server Error: 2" + newLessionCreate.error);
+            .send("Internal Server Error: " + newLessionCreate.error);
         console.log(newLessionCreate);
       }
       if(listLessonUpdate.length){
@@ -160,12 +160,12 @@ class LessonController {
           await salesforce.apex.post(
             "/lesson/autosend/",
             body,
-            function (err, res) {
+            function (err, ret) {
               if (err) {
                 return res.status(500).send("Internal Server Error: " + err);
               }
-              autoLesson.JobID__c = res;
-              item.JobID__c = res;
+              autoLesson.JobID__c = ret;
+              item.JobID__c = ret;
             }
           );
           await salesforce
