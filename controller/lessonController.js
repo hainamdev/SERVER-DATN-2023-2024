@@ -66,6 +66,7 @@ class LessonController {
   createLesson = async (req, res) => {
     try {
       const salesforce = await SalesforceConnection.getConnection();
+      console.log(data);
       const data = req.body;
       let listLessonCreate = [];
       let listLessonUpdate = [];
