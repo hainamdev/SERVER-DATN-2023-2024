@@ -66,101 +66,119 @@ class LessonController {
   createLesson = async (req, res) => {
     try {
       const salesforce = await SalesforceConnection.getConnection();
-      const {
-        status,
-        sentDay,
-        isAutoSent,
-        content,
-        title,
-        classID,
-        lessonID,
-        sendTime,
-        sendMinute,
-      } = req.body;
-      if (!(sentDay && content && title && classID)) {
-        res.status(400).send("All input is required");
-      }
-      var lesson = {
-        Status__c: status ? status : isAutoSent ? "Pending" : "Accepted",
-        SentDay__c: sentDay,
-        IsAutoSent__c: isAutoSent ? isAutoSent : false,
-        Content__c: content,
-        Title__c: title,
-        Name: title,
-      };
-
-      if (lessonID) {
-        lesson.Id = lessonID;
-        const idNewLession = await salesforce
-          .sobject("Lesson__c")
-          .update(lesson, function (err, ret) {
-            if (err || !ret.success) {
-              return { error: err };
-            }
-            return ret.id;
-          });
-        if (idNewLession?.error)
-          return res
-            .status(500)
-            .send("Internal Server Error: 2" + idNewUser.error);
-      } else {
-        lesson.Class__c = classID;
-        const idNewLession = await salesforce
-          .sobject("Lesson__c")
-          .create(lesson, function (err, ret) {
-            if (err || !ret.success) {
-              return { error: err };
-            }
-            return ret.id;
-          });
-        if (idNewLession?.error)
-          return res
-            .status(500)
-            .send("Internal Server Error: 2" + idNewUser.error);
-        lesson.Id = idNewLession.id;
-      }
-
-      if (lesson.IsAutoSent__c) {
-        const date = new Date(sentDay);
-        let conExp =
-          "0 " +
-          sendMinute +
-          " " +
-          sendTime +
-          " " +
-          date.getDate() +
-          " " +
-          (date.getMonth() + 1) +
-          " ? " +
-          date.getFullYear();
-        let autoLesson = {
-          Name: lesson.Name,
-          Id: lesson.Id,
-          SendTime__c: sendTime,
-          SendMinute__c: sendMinute,
+      const data = req.body;
+      let listLessonCreate = [];
+      let listLessonUpdate = [];
+      data.forEach((lessonItem) => {
+        if (
+          !(
+            lessonItem.sentDay &&
+            lessonItem.content &&
+            lessonItem.title &&
+            lessonItem.classID
+          )
+        ) {
+          return res.status(400).send("All input is required");
+        }
+        var lesson = {
+          Status__c: lessonItem.status
+            ? lessonItem.status
+            : lessonItem.isAutoSent
+            ? "Pending"
+            : "Accepted",
+          SentDay__c: lessonItem.sentDay,
+          SendTime__c: lessonItem.sendTime ? lessonItem.sendTime : null,
+          SendMinute__c: lessonItem.sendMinute ? lessonItem.sendMinute : null,
+          IsAutoSent__c: lessonItem.isAutoSent ? lessonItem.isAutoSent : false,
+          Content__c: lessonItem.content,
+          Title__c: lessonItem.title,
+          Name: lessonItem.title,
         };
-        var body = { lesson: autoLesson, exp: conExp };
-        await salesforce.apex.post(
-          "/lesson/autosend/",
-          body,
-          function (err, res) {
-            if (err) {
-              return res.status(500).send("Internal Server Error: " + err);
-            }
-            autoLesson.JobID__c = res;
-          }
-        );
-        await salesforce
+        if (lessonItem.lessonID) {
+          lesson.Id = lessonItem.lessonID;
+          listLessonUpdate.push(lesson);
+        } else {
+          lesson.Class__c = lessonItem.classID;
+          listLessonCreate.push(lesson);
+        }
+      });
+      if(listLessonCreate.length){
+        const newLessionCreate = await salesforce
           .sobject("Lesson__c")
-          .update(autoLesson, function (err, ret) {
-            if (err || !ret.success) {
-              return res.status(500).send("Internal Server Error: " + err);
+          .create(listLessonCreate, function (err, ret) {
+            if (err) {
+              return { error: err };
+            }
+            listLessonCreate.forEach((item, index) => {
+              item.Id = ret[index].id;
+            })
+          });
+        if (newLessionCreate?.error)
+          return res
+            .status(500)
+            .send("Internal Server Error: 2" + newLessionCreate.error);
+        console.log(newLessionCreate);
+      }
+      if(listLessonUpdate.length){
+        const newLessionUpdate = await salesforce
+          .sobject("Lesson__c")
+          .update(listLessonUpdate, function (err, ret) {
+            if (err) {
+              return { error: err };
             }
           });
+        if (newLessionUpdate?.error)
+          return res
+            .status(500)
+            .send("Internal Server Error: 2" + newLessionUpdate.error);
+        console.log(newLessionUpdate);
       }
+
+      const listLesson = listLessonCreate.concat(listLessonUpdate);
+      listLesson.forEach(async (item, index) => {
+        if (item.IsAutoSent__c) {
+          const date = new Date(item.sentDay);
+          let conExp =
+            "0 " +
+            item.SendMinute__c +
+            " " +
+            item.SendTime__c +
+            " " +
+            date.getDate() +
+            " " +
+            (date.getMonth() + 1) +
+            " ? " +
+            date.getFullYear();
+          let autoLesson = {
+            Name: item.Name,
+            Id: item.Id,
+            SendTime__c: item.SendTime__c,
+            SendMinute__c: item.SendMinute__c,
+          };
+          var body = { lesson: autoLesson, exp: conExp };
+          await salesforce.apex.post(
+            "/lesson/autosend/",
+            body,
+            function (err, res) {
+              if (err) {
+                return res.status(500).send("Internal Server Error: " + err);
+              }
+              autoLesson.JobID__c = res;
+              item.JobID__c = res;
+            }
+          );
+          await salesforce
+            .sobject("Lesson__c")
+            .update(autoLesson, function (err, ret) {
+              if (err || !ret.success) {
+                return res.status(500).send("Internal Server Error: " + err);
+              }
+            });
+        }
+      })
       return res.status(201).json({
         status: 201,
-        data: [lesson],
+        data: listLesson,
       });
     } catch (err) {
       console.log(err);
