@@ -56,6 +56,12 @@ io.on("connection", (socket) => {
     console.log(_teacher);
   });
 
+  socket.on("addParent", (data) => {
+    const { classId } = data;
+    if (classId && classId !== "") addRoomOfClass(classId, socket);
+    console.log(_roomOfClass);
+  });
+
   socket.on("add-lesson-complete", (data) => {
     const { classId, lessonId } = data;
     socket
