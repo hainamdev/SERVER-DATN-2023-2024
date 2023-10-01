@@ -259,7 +259,7 @@ class UsersController {
         return classInfo.error ? classInfo : { error: " " };
       }
       delete classInfo.records[0].attributes;
-      rs.records[0] = { ...rs.records[0], Class: classInfo.records[0] };
+      rs.records[0] = { ...rs.records[0], Class:{Id: classInfo.records[0].ClassHeader__c} };
     }
     delete rs.records[0].attributes;
     return rs;
