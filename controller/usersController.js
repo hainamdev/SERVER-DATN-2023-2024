@@ -207,6 +207,59 @@ class UsersController {
       }
       delete classInfo.records[0].attributes;
       rs.records[0] = { ...rs.records[0], Class: classInfo.records[0] };
+    } else if (role.records[0].Title__c === "PARENT") {
+      let parent = await salesforce.query(
+        `SELECT Id, Name FROM Parent__c WHERE Users__c  = '${rs.records[0].Id}'`,
+        (error, result) => {
+          if (error) {
+            return { error: error };
+          }
+          return result;
+        }
+      );
+      if (!parent.records.length || parent.error) {
+        return parent.error ? parent : { error: " " };
+      }
+      let parentHocSinh = await salesforce.query(
+        `SELECT Id, Name, HocSinh__c, Parent__c FROM ParentStudent__c WHERE Parent__c = '${parent.records[0].Id}'`,
+        (error, result) => {
+          if (error) {
+            return { error: error };
+          }
+          return result;
+        }
+      );
+      if (!parentHocSinh.records.length || parentHocSinh.error) {
+        return parentHocSinh.error ? parentHocSinh : { error: " " };
+      }
+      let hocSinh = await salesforce.query(
+        `SELECT Id, Name FROM HocSinh__c WHERE Id = '${parentHocSinh.records[0].HocSinh__c}'`,
+        (error, result) => {
+          if (error) {
+            return { error: error };
+          }
+          return result;
+        }
+      );
+      if (!hocSinh.records.length || hocSinh.error) {
+        return hocSinh.error ? hocSinh : { error: " " };
+      }
+      delete hocSinh.records[0].attributes;
+      rs.records[0] = { ...rs.records[0], Student: hocSinh.records[0] };
+      let classInfo = await salesforce.query(
+        `SELECT Id, Name, ClassHeader__c FROM ClassLine__c WHERE HocSinh__c = '${hocSinh.records[0].Id}' AND ClassHeader__r.Status__c = 'Active'`,
+        (error, result) => {
+          if (error) {
+            return { error: error };
+          }
+          return result;
+        }
+      );
+      if (!classInfo || classInfo.error) {
+        return classInfo.error ? classInfo : { error: " " };
+      }
+      delete classInfo.records[0].attributes;
+      rs.records[0] = { ...rs.records[0], Class: classInfo.records[0] };
     }
     delete rs.records[0].attributes;
     return rs;
