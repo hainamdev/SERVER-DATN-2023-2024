@@ -64,11 +64,9 @@ io.on("connection", (socket) => {
 
   socket.on("add-lesson-complete", (data) => {
     const { classId, lessonId } = data;
-    socket
-      .to(_roomOfClass.get(classId))
-      .emit("notify-new-lesson", { classId, lessonId });
     console.log("classId: " + classId);
     console.log("lessonId: " + lessonId);
+    socket.to(_roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId });
   });
 
   // when disconnect
