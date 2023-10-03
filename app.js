@@ -61,13 +61,13 @@ app.post("/lesson/delete", lessonController.deleteLesson);
 app.post("/notification", notificationController.getAllNotificationByUserID);
 
 //-----------------------------SALESFORCE-----------------------------//
-// app.post("/notify/save-lesson-auto", (req, res) => {
-//   const { classId, lessonId } = req.body;
-//   socketApi.io.to(socketApi._roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId })
-//   return res.status(200).json({
-//     status: 200,
-//     message: 'SUCCCCCCCCCCCESS'
-//   });
-// });
+app.post("/notify/save-lesson-auto", (req, res) => {
+  const { classId, lessonId } = req.body;
+  socketApi.io.to(socketApi._roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId })
+  return res.status(200).json({
+    status: 200,
+    message: 'SUCCCCCCCCCCCESS'
+  });
+});
 
 module.exports = app;

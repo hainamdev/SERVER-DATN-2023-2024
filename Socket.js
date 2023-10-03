@@ -1,6 +1,5 @@
 const { Server } = require("socket.io");
 const uuid = require("uuid");
-const app = require("./app");
 
 const io = new Server({
   cors: {
@@ -25,7 +24,11 @@ const io = new Server({
 _roomOfClass = new Map();
 _teacher = new Map();
 
-const socketApi = {io: io};
+const socketApi = { 
+  io: io,
+  _roomOfClass,
+  _teacher
+ };
 
 const addTeacher = (userId, socket) => {
   var tmp = _teacher.get(userId);
@@ -75,15 +78,6 @@ io.on("connection", (socket) => {
   // when disconnect
   socket.on("disconnect", (socket) => {
     console.log("a user " + socket.id + " disconnected!");
-  });
-
-  app.post("/notify/save-lesson-auto", (req, res) => {
-    const { classId, lessonId } = req.body;
-    socket.to(_roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId })
-    return res.status(200).json({
-      status: 200,
-      message: 'SUCCESS'
-    });
   });
 });
 
