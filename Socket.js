@@ -49,6 +49,7 @@ const addRoomOfClass = (classId, socket) => {
 
 io.on("connection", (socket) => {
   console.log("a user " + socket.id + " Connected!");
+  socket.emit('success-connect', {message: 'you was connected socket'})
 
   socket.on("addTeacher", (data) => {
     const { senderId } = data;
