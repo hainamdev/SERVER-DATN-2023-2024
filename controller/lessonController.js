@@ -82,11 +82,7 @@ class LessonController {
           return res.status(400).send("All input is required");
         }
         var lesson = {
-          Status__c: lessonItem.status
-            ? lessonItem.status
-            : lessonItem.isAutoSent
-            ? "Pending"
-            : "Accepted",
+          Status__c: lessonItem.status ? lessonItem.status : (lessonItem.isAutoSent ? "Pending" : "Accepted"),
           SentDay__c: lessonItem.sentDay,
           SendTime__c: lessonItem.sendTime !== undefined ? lessonItem.sendTime : null,
           SendMinute__c: lessonItem.sendMinute !== undefined ? lessonItem.sendMinute : null,
@@ -138,7 +134,7 @@ class LessonController {
       const listLesson = listLessonCreate.concat(listLessonUpdate);
       listLesson.forEach(async (item, index) => {
         if (item.IsAutoSent__c) {
-          const date = new Date(item.sentDay);
+          const date = new Date(item.SentDay__c);
           let conExp =
             "0 " +
             item.SendMinute__c +
