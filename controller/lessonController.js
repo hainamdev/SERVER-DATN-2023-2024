@@ -88,8 +88,8 @@ class LessonController {
             ? "Pending"
             : "Accepted",
           SentDay__c: lessonItem.sentDay,
-          SendTime__c: lessonItem.sendTime ? lessonItem.sendTime : null,
-          SendMinute__c: lessonItem.sendMinute ? lessonItem.sendMinute : null,
+          SendTime__c: lessonItem.sendTime !== undefined ? lessonItem.sendTime : null,
+          SendMinute__c: lessonItem.sendMinute !== undefined ? lessonItem.sendMinute : null,
           IsAutoSent__c: lessonItem.isAutoSent ? lessonItem.isAutoSent : false,
           Content__c: lessonItem.content,
           Title__c: lessonItem.title,
