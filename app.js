@@ -64,6 +64,7 @@ app.post("/notification", notificationController.getAllNotificationByUserID);
 //-----------------------------SALESFORCE-----------------------------//
 app.post("/notify/save-lesson-auto", (req, res) => {
   const { classId, lessonId } = req.body;
+  console.log("1 classId: " + classId + ", lessonId:" + lessonId);
   socketApi.sendNotifyNewLesson({ classId, lessonId });
   return res.status(200).json({
     status: 200,
