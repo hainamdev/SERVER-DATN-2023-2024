@@ -78,9 +78,9 @@ io.on("connection", (socket) => {
 });
 
 socketApi.sendNotifyNewLesson = function(data) {
-  const  { classId, lessonId } = data;
-  console.log("classId: " + classId + ", lessonId:" + lessonId);
-  console.log(_roomOfClass.get(classId));
-  io.sockets.to(_roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId } );
+  const  { classID, lessonID  } = data;
+  console.log("classId: " + classID + ", lessonId:" + lessonID);
+  console.log(_roomOfClass.get(classID));
+  io.sockets.to(_roomOfClass.get(classID)).emit("notify-new-lesson", { classID, lessonID } );
 };
 module.exports = socketApi;
