@@ -14,6 +14,7 @@ class NotificationController {
           `SELECT ${this.defaultFields} FROM Notification__c WHERE Users__c = '${userId}'`,
           (error, result) => {
             if (error) {
+              res.status(500).json(error);
               return;
             }
             if(result.totalSize) delete result.records[0].attributes; 
