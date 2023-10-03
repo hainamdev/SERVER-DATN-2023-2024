@@ -24,11 +24,7 @@ const io = new Server({
 _roomOfClass = new Map();
 _teacher = new Map();
 
-const socketApi = { 
-  io: io,
-  _roomOfClass,
-  _teacher
- };
+const socketApi = {io: io};
 
 const addTeacher = (userId, socket) => {
   var tmp = _teacher.get(userId);
@@ -81,4 +77,10 @@ io.on("connection", (socket) => {
   });
 });
 
+socketApi.sendNotifyNewLesson = function(data) {
+  const  { classId, lessonId } = data;
+  console.log("classId: " + classId + ", lessonId:" + lessonId);
+  console.log(_roomOfClass.get(classId));
+  io.sockets.to(_roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId } );
+};
 module.exports = socketApi;

@@ -9,6 +9,7 @@ const lessonController = require("./controller/lessonController");
 const notificationController = require("./controller/notificationController");
 const app = express();
 const socketApi = require("./Socket");
+// const io = require('socket.io')
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -63,7 +64,7 @@ app.post("/notification", notificationController.getAllNotificationByUserID);
 //-----------------------------SALESFORCE-----------------------------//
 app.post("/notify/save-lesson-auto", (req, res) => {
   const { classId, lessonId } = req.body;
-  socketApi.io.to(socketApi._roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId })
+  socketApi.sendNotifyNewLesson({ classId, lessonId });
   return res.status(200).json({
     status: 200,
     message: 'SUCCCCCCCCCCCESS'
