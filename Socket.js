@@ -21,9 +21,14 @@ const io = new Server({
 //   },
 // });
 
-const socketApi = { io: io };
 _roomOfClass = new Map();
 _teacher = new Map();
+
+const socketApi = { 
+  io: io,
+  _roomOfClass,
+  _teacher
+ };
 
 const addTeacher = (userId, socket) => {
   var tmp = _teacher.get(userId);
@@ -64,10 +69,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("add-lesson-complete", (data) => {
-    const { classId, lessonId } = data;
+    const { classId, lessonId, dataLesson} = data;
     console.log("classId: " + classId);
     console.log("lessonId: " + lessonId);
-    socket.to(_roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId });
+    socket.to(_roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId, dataLesson});
   });
 
   // when disconnect

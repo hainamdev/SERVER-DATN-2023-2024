@@ -6,7 +6,9 @@ const usersController = require("./controller/usersController");
 const classController = require("./controller/classController");
 const hocSinhController = require("./controller/hocSinhController");
 const lessonController = require("./controller/lessonController");
+const notificationController = require("./controller/notificationController");
 const app = express();
+const socketApi = require("./Socket");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -55,13 +57,17 @@ app.get("/lesson/id/:id", lessonController.getAllLessonById);
 app.post("/lesson/save", lessonController.createLesson);
 app.post("/lesson/delete", lessonController.deleteLesson);
 
+//-----------------------------NOTIFICATION-----------------------------//
+app.post("/notification", notificationController.getAllNotificationByUserID);
+
 //-----------------------------SALESFORCE-----------------------------//
 app.post("/notify/save-lesson-auto", (req, res) => {
-    console.log(req.body);
-    return res.status(200).json({
-      status: 200,
-      message: 'SUCCESS'
-    });
+  const { classId, lessonId } = req.body;
+  socketApi.io.to(socketApi._roomOfClass.get(classId)).emit("notify-new-lesson", { classId, lessonId })
+  return res.status(200).json({
+    status: 200,
+    message: 'SUCCCCCCCCCCCESS'
+  });
 });
 
 module.exports = app;

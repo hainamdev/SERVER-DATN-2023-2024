@@ -9,16 +9,19 @@ class HocSinhController {
     try {
       const salesforce = await SalesforceConnection.getConnection();
       const id = req.params.id;
-      await salesforce.query(
-        `SELECT ${this.defaultFields} FROM HocSinh__c WHERE Id = '${id}'`,
-        (error, result) => {
-          if (error) {
-            returnResult.returnError(error, res);
+      if(id && id !== ''){
+        await salesforce.query(
+          `SELECT ${this.defaultFields} FROM HocSinh__c WHERE Id = '${id}'`,
+          (error, result) => {
+            if (error) {
+              // returnResult.returnError(error, res);
+              return;
+            }
+            delete result.records[0].attributes;
+            returnResult.returnSuccess(result, res);
           }
-          delete result.records[0].attributes;
-          returnResult.returnSuccess(result, res);
-        }
-      );
+        );
+      }
     } catch (error) {
       returnResult.returnError(error, res);
     }
