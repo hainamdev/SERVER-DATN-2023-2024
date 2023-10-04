@@ -38,7 +38,8 @@ class ClassController {
         `SELECT Id, Name, GiaoVien__c, NumOfStudent__c, Status__c FROM ClassHeader__c WHERE Id = '${id}'`,
         (error, result) => {
           if (error) {
-            returnResult.returnError(error, res);
+            // returnResult.returnError(error, res);
+            return;
           }
           delete result.records[0].attributes;
           result.records[0] = {
@@ -49,7 +50,8 @@ class ClassController {
         }
       );
     } catch (error) {
-      returnResult.returnError(error, res);
+      // returnResult.returnError(error, res);
+      res.status(500).json(error);
     }
   };
 }
