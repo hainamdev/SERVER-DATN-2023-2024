@@ -35,7 +35,8 @@ class LessonController {
         `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' ORDER BY LastModifiedDate DESC`,
         (error, result) => {
           if (error) {
-            returnResult.returnError(error, res);
+            // returnResult.returnError(error, res);
+            return;
           }
           result.records.forEach((ls) => {
             delete ls.attributes;
@@ -54,7 +55,8 @@ class LessonController {
       const { id } = req.body;
       salesforce.sobject("Lesson__c").destroy(id, function (err, ret) {
         if (err || !ret.success) {
-          return res.status(500).send("Internal Server Error: " + err);
+          // return res.status(500).send("Internal Server Error: " + err);
+          return;
         }
         return res.status(200).send("Success");
       });
