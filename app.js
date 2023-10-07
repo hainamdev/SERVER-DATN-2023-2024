@@ -57,8 +57,10 @@ app.get("/student/:id", hocSinhController.getHocSinhByID);
 app.get("/lesson/:idLop", lessonController.getAllLessonByIdLop);
 app.get("/lesson/id/:id", lessonController.getAllLessonById);
 app.post("/lesson/save", lessonController.createLesson);
+app.post("/lesson/get-week", lessonController.getLessonWeek);
 app.post("/lesson/delete", lessonController.deleteLesson);
 
+//-----------------------------SCORE-----------------------------//
 app.post("/score/import", scoreController.createImportScore);
 app.post("/score/get-all-class", scoreController.getAllScore);
 app.post("/score/get-score", scoreController.getScore);

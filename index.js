@@ -7,5 +7,6 @@ const port = process.env.PORT || 8080;
 socketApi.io.attach(server);
 // server listening
 server.listen(port, () => {
-  ultilLogMessage.consoleLogBoxMessage("Server run on port: " + port);
+  ultilLogMessage.consoleLogBoxMessage("Server run on port: http://localhost:" + port);
 });
+
