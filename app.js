@@ -9,6 +9,7 @@ const lessonController = require("./controller/lessonController");
 const notificationController = require("./controller/notificationController");
 const app = express();
 const socketApi = require("./Socket");
+const scoreController = require("./controller/scoreController");
 // const io = require('socket.io')
 
 app.use(express.urlencoded({ extended: true }));
@@ -57,6 +58,11 @@ app.get("/lesson/:idLop", lessonController.getAllLessonByIdLop);
 app.get("/lesson/id/:id", lessonController.getAllLessonById);
 app.post("/lesson/save", lessonController.createLesson);
 app.post("/lesson/delete", lessonController.deleteLesson);
+
+app.post("/score/import", scoreController.createImportScore);
+app.post("/score/get-all-class", scoreController.getAllScore);
+
+
 
 //-----------------------------NOTIFICATION-----------------------------//
 app.post("/notification", notificationController.getAllNotificationByUserID);
