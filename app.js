@@ -61,6 +61,7 @@ app.post("/lesson/delete", lessonController.deleteLesson);
 
 app.post("/score/import", scoreController.createImportScore);
 app.post("/score/get-all-class", scoreController.getAllScore);
+app.post("/score/get-score", scoreController.getScore);
 
 
 

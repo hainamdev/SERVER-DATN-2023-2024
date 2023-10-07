@@ -47,5 +47,27 @@ class ScoreController {
       console.log(err);
     }
   };
+
+  getScore = async (req, res) => {
+    try {
+      const salesforce = await SalesforceConnection.getConnection();
+      const data = req.body;
+      console.log(data);
+      let resData;
+      await salesforce.apex.post("/score/get-score/", data,function (err, ret) {
+          if (err) {
+            return res.status(500).send("Internal Server Error: " + err);
+          }
+          resData = ret;
+        }
+      );
+      return res.status(200).json({
+        status: 200,
+        data: resData,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 }
 module.exports = new ScoreController();
