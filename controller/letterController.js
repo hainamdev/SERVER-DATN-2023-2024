@@ -12,12 +12,10 @@ class LetterController {
       const id = req.params.id;
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM School_Leave_Letter__c WHERE ClassHeader__c = '${id}' AND TrangThai__c != 'DELETE'`,
-        (error, result) => {
+        async (error, result) => {
           if (error) return error;
-          result.records.forEach((ls) => {
-            delete ls.attributes;
-          });
-          returnResult.returnSuccess(result, res);
+          const lstHocSinh = await this.getInfoHocSinh(result, salesforce);
+          returnResult.returnSuccess(lstHocSinh, res);
         }
       );
     } catch (error) {
@@ -32,12 +30,10 @@ class LetterController {
       const id = req.params.id;
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM School_Leave_Letter__c WHERE HocSinh__c = '${id}'`,
-        (error, result) => {
+        async (error, result) => {
           if (error) return error;
-          result.records.forEach((ls) => {
-            delete ls.attributes;
-          });
-          returnResult.returnSuccess(result, res);
+          const lstHocSinh = await this.getInfoHocSinh(result, salesforce);
+          returnResult.returnSuccess(lstHocSinh, res);
         }
       );
     } catch (error) {
@@ -68,5 +64,31 @@ class LetterController {
     }
     res.json(letter);
   };
+
+  getInfoHocSinh = async (data, salesforce) => {
+    let listHocSinh = [];
+    let rs = data.records.map((item) => {
+      return item.HocSinh__c;
+    });
+    if (rs.length) {
+      let tmp = "'" + rs.join("','") + "'";
+      listHocSinh = await salesforce.query(
+        `SELECT Id, Name FROM HocSinh__c WHERE Id IN (${tmp})`,
+        (error, result) => {
+          if (error) return [];
+          result.records.forEach((hs) => {
+            delete hs.attributes;
+          });
+          return result.records;
+        }
+      );
+    }
+    data.records.forEach((ls) => {
+      delete ls.attributes;
+      const hs = listHocSinh.find((hs) => hs.Id === ls.HocSinh__c);
+      ls.HocSinh = hs;
+    });
+    return data;
+  }
 }
 module.exports = new LetterController();
