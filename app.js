@@ -10,6 +10,7 @@ const notificationController = require("./controller/notificationController");
 const app = express();
 const socketApi = require("./Socket");
 const scoreController = require("./controller/scoreController");
+const letterController = require("./controller/letterController");
 // const io = require('socket.io')
 
 app.use(express.urlencoded({ extended: true }));
@@ -65,7 +66,9 @@ app.post("/score/import", scoreController.createImportScore);
 app.post("/score/get-all-class", scoreController.getAllScore);
 app.post("/score/get-score", scoreController.getScore);
 
-
+//-----------------------------LETTER-----------------------------//
+app.get("/letter/:id", letterController.getLetterByIDLop);
+app.post("/letter/save", letterController.saveLetter);
 
 //-----------------------------NOTIFICATION-----------------------------//
 app.post("/notification", notificationController.getAllNotificationByUserID);
