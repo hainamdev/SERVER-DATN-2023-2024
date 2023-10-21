@@ -45,7 +45,7 @@ class LetterController {
     const salesforce = await SalesforceConnection.getConnection();
     let letter = {...req.body};
     console.log(letter);
-    if(letter.Id){
+    if(!letter.Id){
       const idNewLetter = await salesforce.sobject("School_Leave_Letter__c").create(letter, function (err, ret) {
         if (err || !ret.success) {
           return { error: err };
