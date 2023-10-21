@@ -11,7 +11,7 @@ class LetterController {
       const salesforce = await SalesforceConnection.getConnection();
       const id = req.params.id;
       await salesforce.query(
-        `SELECT ${this.defaultFields} FROM School_Leave_Letter__c WHERE ClassHeader__c = '${id}'`,
+        `SELECT ${this.defaultFields} FROM School_Leave_Letter__c WHERE ClassHeader__c = '${id}' AND TrangThai__c != 'DELETE'`,
         (error, result) => {
           if (error) return error;
           result.records.forEach((ls) => {
@@ -22,6 +22,25 @@ class LetterController {
       );
     } catch (error) {
       // returnResult.returnError(error, res);
+      res.status(500).json(error);
+    }
+  };
+
+  getLetterByIDHocSinh = async (req, res) => {
+    try {
+      const salesforce = await SalesforceConnection.getConnection();
+      const id = req.params.id;
+      await salesforce.query(
+        `SELECT ${this.defaultFields} FROM School_Leave_Letter__c WHERE HocSinh__c = '${id}'`,
+        (error, result) => {
+          if (error) return error;
+          result.records.forEach((ls) => {
+            delete ls.attributes;
+          });
+          returnResult.returnSuccess(result, res);
+        }
+      );
+    } catch (error) {
       res.status(500).json(error);
     }
   };

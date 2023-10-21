@@ -68,6 +68,7 @@ app.post("/score/get-score", scoreController.getScore);
 
 //-----------------------------LETTER-----------------------------//
 app.get("/letter/:id", letterController.getLetterByIDLop);
+app.get("/letter/hocsinh/:id", letterController.getLetterByIDHocSinh);
 app.post("/letter/save", letterController.saveLetter);
 
 //-----------------------------NOTIFICATION-----------------------------//
