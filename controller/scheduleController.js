@@ -13,9 +13,9 @@ class ScheduleController {
   getScheduleByIdClass = async (req, res) => {
     try {
       const salesforce = await SalesforceConnection.getConnection();
-      const idClass = req.query.idClass;
-      const day = req.query.day;
-      const date = req.query.date;
+      const idClass = req.query?.idClass;
+      const day = req.query?.day;
+      const date = req.query?.date;
       console.log(date);
       var resultData = {
         status : 200,

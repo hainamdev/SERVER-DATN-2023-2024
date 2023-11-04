@@ -61,9 +61,8 @@ class ClassController {
   getAllLop = async (req, res) => {
     try {
       const salesforce = await SalesforceConnection.getConnection();
-      const year = req.query.year;
-      console.log(year);
-      let query02 = (year && year !== '') ? `WHERE SchoolYear__c = ${year}` : '';
+      const year = req.query?.year;
+      let query02 = (year && year !== '') ? ` WHERE SchoolYear__c = ${year} ` : '';
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM ClassHeader__c ${query02}`,
         (error, result) => {
@@ -78,6 +77,5 @@ class ClassController {
       res.status(500).json(error);
     }
   };
-
 }
 module.exports = new ClassController();
