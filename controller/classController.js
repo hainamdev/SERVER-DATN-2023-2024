@@ -1,7 +1,10 @@
 const SalesforceConnection = require("../config/loginSalesforce");
 const returnResult = require("../utils/utilReturnData");
 class ClassController {
-  constructor() {}
+
+  constructor() {
+    this.defaultFields = "Id, Name, GiaoVien__c, NumOfStudent__c, Status__c, SchoolYear__c, CreatedDate, LastModifiedDate";
+  }
 
   getHocSinhByIDLop = async (req, res) => {
     try {
@@ -54,5 +57,27 @@ class ClassController {
       res.status(500).json(error);
     }
   };
+
+  getAllLop = async (req, res) => {
+    try {
+      const salesforce = await SalesforceConnection.getConnection();
+      const year = req.query.year;
+      console.log(year);
+      let query02 = (year && year !== '') ? `WHERE SchoolYear__c = ${year}` : '';
+      await salesforce.query(
+        `SELECT ${this.defaultFields} FROM ClassHeader__c ${query02}`,
+        (error, result) => {
+          if (error) return;
+          result.records.forEach((ls) => {
+            delete ls.attributes;
+          });
+          returnResult.returnSuccess(result, res);
+        }
+      );
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  };
+
 }
 module.exports = new ClassController();

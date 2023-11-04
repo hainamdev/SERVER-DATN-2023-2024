@@ -49,6 +49,7 @@ app.get("/user/:id", usersController.getUserbyId);
 //-----------------------------CLASS-----------------------------//
 // lấy hoc sinh bằng Id Lớp
 app.get("/class/:id", classController.getHocSinhByIDLop);
+app.get("/class/all", classController.getAllLop);
 
 //-----------------------------STUDENT-----------------------------//
 // lấy hoc sinh bằng Id
