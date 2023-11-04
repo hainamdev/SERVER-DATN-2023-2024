@@ -1,4 +1,4 @@
-const SalesforceConnection = require("../config/loginSalesforce");
+  const SalesforceConnection = require("../config/loginSalesforce");
 const returnResult = require("../utils/utilReturnData");
 class ScheduleController {
   constructor() {
@@ -14,16 +14,22 @@ class ScheduleController {
       const salesforce = await SalesforceConnection.getConnection();
       const idClass = req.query.idClass;
       const day = req.query.day;
-      console.log(day);
+      const date = req.query.date;
+      console.log(date);
       var resultData = {
         status : 200,
         Schedule: {}
       }
+      let query02 = 'AND StartDate__c <= TODAY AND EndDate__c >= TODAY';
+      if(date && date !== ''){
+        query02 = `AND StartDate__c <= ${date} AND EndDate__c >= ${date}`;
+      }
       await salesforce.query(
-        `SELECT ${this.defaultFields} FROM Schedule__c WHERE ClassHeader__c = '${idClass}' AND StartDate__c <= TODAY AND EndDate__c >= TODAY AND Status__c = 'ACCEPT'`,
+        `SELECT ${this.defaultFields} FROM Schedule__c WHERE ClassHeader__c = '${idClass}' ${query02} AND Status__c = 'ACCEPT'`,
         (error, result) => {
           if (error) {
-            return;
+          console.log(error);
+          return;
           }
           console.log(result);
           result.records.forEach((ls) => {
@@ -53,6 +59,50 @@ class ScheduleController {
       );
     } catch (error) {
       returnResult.returnError(error, res);
+    }
+  };
+  
+  createSchedule = async (req, res) => {
+    try {
+      // "Title__c": "TKB - HK1 (2023 - 2024)",
+      // "EndDate__c": "2023-12-31",
+      // "StartDate__c": "2023-09-01",
+      // "Status__c": "ACCEPT",
+      const salesforce = await SalesforceConnection.getConnection();
+      const data = req.body;
+      console.log(data);
+      if (!(data.Title__c && data.EndDate__c && data.StartDate__c && data.Status__c)){
+        return res.status(400).send("All input is required");
+      }
+      let scheduleList = [];
+      data.Schedule.forEach((schedule) => {
+        var obj = {
+          ClassHeader__c : schedule.ClassHeader__c,
+          Name: data.Title__c,
+          Title__c: data.Title__c,
+          EndDate__c: data.EndDate__c,
+          StartDate__c: data.StartDate__c,
+          Status__c: data.Status__c,
+        }
+        scheduleList.push(obj);
+      });
+      // await salesforce.query(
+      //   `SELECT Id FROM Schedule__c WHERE ClassHeader__c = '${idClass}' AND StartDate__c <= TODAY AND EndDate__c >= TODAY AND Status__c = 'ACCEPT'`,
+      //   (error, result) => {
+      //     if (error) {
+      //       return;
+      //     }
+      //     console.log(result);
+      //     result.records.forEach((ls) => {
+      //       delete ls.attributes;
+      //       resultData.Schedule = ls;
+      //     });
+      //   }
+      // );
+
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send(err);
     }
   };
 
