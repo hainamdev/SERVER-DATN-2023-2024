@@ -79,6 +79,7 @@ app.post("/notification", notificationController.getAllNotificationByUserID);
 // /fruit/:fruitName&:fruitColor
 // app.get("/schedule/:idClass", scheduleController.getScheduleByIdClass);
 app.get("/schedule", scheduleController.getScheduleByIdClass);
+app.post("/schedule/save", scheduleController.createSchedule);
 
 //-----------------------------SALESFORCE-----------------------------//
 app.post("/notify/save-lesson-auto", (req, res) => {
