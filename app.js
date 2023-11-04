@@ -11,6 +11,7 @@ const app = express();
 const socketApi = require("./Socket");
 const scoreController = require("./controller/scoreController");
 const letterController = require("./controller/letterController");
+const scheduleController = require("./controller/scheduleController");
 // const io = require('socket.io')
 
 app.use(express.urlencoded({ extended: true }));
@@ -73,6 +74,11 @@ app.post("/letter/save", letterController.saveLetter);
 
 //-----------------------------NOTIFICATION-----------------------------//
 app.post("/notification", notificationController.getAllNotificationByUserID);
+
+//-----------------------------LETTER-----------------------------//
+// /fruit/:fruitName&:fruitColor
+// app.get("/schedule/:idClass", scheduleController.getScheduleByIdClass);
+app.get("/schedule", scheduleController.getScheduleByIdClass);
 
 //-----------------------------SALESFORCE-----------------------------//
 app.post("/notify/save-lesson-auto", (req, res) => {
