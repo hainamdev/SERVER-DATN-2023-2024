@@ -12,6 +12,8 @@ const socketApi = require("./Socket");
 const scoreController = require("./controller/scoreController");
 const letterController = require("./controller/letterController");
 const scheduleController = require("./controller/scheduleController");
+const attendanceController = require("./controller/attendanceController");
+const teacherController = require("./controller/teacherController");
 // const io = require('socket.io')
 
 app.use(express.urlencoded({ extended: true }));
@@ -81,6 +83,14 @@ app.post("/notification", notificationController.getAllNotificationByUserID);
 // app.get("/schedule/:idClass", scheduleController.getScheduleByIdClass);
 app.get("/schedule", scheduleController.getScheduleByIdClass);
 app.post("/schedule/save", scheduleController.createSchedule);
+
+//-----------------------------ATTENDANCEDAY-----------------------------//
+app.get("/attendanceDay/classId/:id", attendanceController.getAllAttendanceDayById);
+app.post("/attendanceDay/save", attendanceController.createAttendanceDay);
+
+//-----------------------------TEACHER-----------------------------//
+app.get("/teacher/", teacherController.getAllTeacher);
+app.post("/teacher/save", teacherController.createTeacher);
 
 //-----------------------------SALESFORCE-----------------------------//
 app.post("/notify/save-lesson-auto", (req, res) => {

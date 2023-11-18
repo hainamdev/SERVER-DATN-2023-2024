@@ -192,7 +192,11 @@ class LessonController {
       await salesforce.apex.post("/lesson/get/", data,function (err, ret) {
           if (err) {
             console.log(err);
-            return res.status(500).send("Internal Server Error: " + err);
+            // return res.status(500).send("Internal Server Error: " + err);
+            return res.status(200).json({
+              status: 500,
+              error: err,
+            });
           }
           resData = ret;
         }
