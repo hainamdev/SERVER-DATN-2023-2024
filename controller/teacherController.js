@@ -3,6 +3,7 @@ const returnResult = require("../utils/utilReturnData");
 class LessonController {
   constructor() {
     // SELECT Id, Name, MaGiaoVien__c, Users__c FROM Teacher__c
+    // SELECT Id, Name, CreatedDate, UserName__c, Gender__c, Email__c, Phone__c, BirthDay__c, Password__c, LastModifiedDate FROM Users__c
     this.defaultFields =
       "Id, Name, MaGiaoVien__c, Users__c";
   }
@@ -10,61 +11,83 @@ class LessonController {
   getAllTeacher = async (req, res) => {
     try {
       const salesforce = await SalesforceConnection.getConnection();
-      const id = req.params.id;
+      var rs = [];
+      var listUserId = [];
       await salesforce.query(
         `SELECT ${this.defaultFields} FROM Teacher__c`,
         (error, result) => {
           if (error) {
             return;
           }
-          result.records.forEach((ls) => {
+          result.records.forEach(async (ls) => {
             delete ls.attributes;
+            listUserId.push(ls.Users__c);
           });
-          returnResult.returnSuccess(result, res);
+          rs = result;
         }
       );
+      if(rs.totalSize > 0){
+        await salesforce.query(
+          `SELECT Id, Name, CreatedDate, UserName__c, Gender__c, Email__c, Phone__c, BirthDay__c, Password__c, LastModifiedDate FROM Users__c WHERE Id IN ('${listUserId.join("', '")}')`,
+          (error, result) => {
+            if (error) {
+              return;
+            }
+            result.records.forEach((us) => {
+              delete us.attributes;
+              var tmp = rs.records.find((item) => item.Users__c === us.Id);
+              tmp.User = {
+                ...us
+              }
+              console.log(tmp);
+            });
+          }
+        );
+      }
+      returnResult.returnSuccess(rs, res);
     } catch (error) {
       returnResult.returnError(error, res);
     }
   };
 
-  // getAllLessonByIdLop = async (req, res) => {
-  //   try {
-  //     const salesforce = await SalesforceConnection.getConnection();
-  //     const idLop = req.params.idLop;
-  //     await salesforce.query(
-  //       `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' ORDER BY LastModifiedDate DESC`,
-  //       (error, result) => {
-  //         if (error) {
-  //           // returnResult.returnError(error, res);
-  //           return;
-  //         }
-  //         result.records.forEach((ls) => {
-  //           delete ls.attributes;
-  //         });
-  //         returnResult.returnSuccess(result, res);
-  //       }
-  //     );
-  //   } catch (error) {
-  //     returnResult.returnError(error, res);
-  //   }
-  // };
-
-  // deleteLesson = async (req, res) => {
-  //   try {
-  //     const salesforce = await SalesforceConnection.getConnection();
-  //     const { id } = req.body;
-  //     salesforce.sobject("Lesson__c").destroy(id, function (err, ret) {
-  //       if (err || !ret.success) {
-  //         // return res.status(500).send("Internal Server Error: " + err);
-  //         return;
-  //       }
-  //       return res.status(200).send("Success");
-  //     });
-  //   } catch (error) {
-  //     returnResult.returnError(error, res);
-  //   }
-  // };
+  getAllTeacherById = async (req, res) => {
+    try {
+      const salesforce = await SalesforceConnection.getConnection();
+      const id = req.params.id;
+      var rs = [];
+      await salesforce.query(
+        `SELECT ${this.defaultFields} FROM Teacher__c WHERE Id = '${id}'`,
+        (error, result) => {
+          if (error) {
+            return;
+          }
+          result.records.forEach(async (ls) => {
+            delete ls.attributes;
+          });
+          rs = result;
+        }
+      );
+      if(rs.totalSize > 0){
+        await salesforce.query(
+          `SELECT Id, Name, CreatedDate, UserName__c, Gender__c, Email__c, Phone__c, BirthDay__c, Password__c, LastModifiedDate FROM Users__c WHERE Id = '${rs.records[0].Users__c}'`,
+          (error, result) => {
+            if (error) {
+              return;
+            }
+            result.records.forEach((us) => {
+              delete us.attributes;
+              rs.records[0].User = {
+                ...us
+              }
+            });
+          }
+        );
+      }
+      returnResult.returnSuccess(rs, res);
+    } catch (error) {
+      returnResult.returnError(error, res);
+    }
+  };
 
   createTeacher = async (req, res) => {
     try {
@@ -88,31 +111,5 @@ class LessonController {
       console.log(err);
     }
   };
-  // getLessonWeek = async (req, res) => {
-  //   try {
-  //     const salesforce = await SalesforceConnection.getConnection();
-  //     const data = req.body;
-  //     console.log(data);
-  //     let resData;
-  //     await salesforce.apex.post("/lesson/get/", data,function (err, ret) {
-  //         if (err) {
-  //           console.log(err);
-  //           // return res.status(500).send("Internal Server Error: " + err);
-  //           return res.status(200).json({
-  //             status: 500,
-  //             error: err,
-  //           });
-  //         }
-  //         resData = ret;
-  //       }
-  //     );
-  //     return res.status(200).json({
-  //       status: 200,
-  //       data: resData,
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 }
 module.exports = new LessonController();

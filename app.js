@@ -90,6 +90,7 @@ app.post("/attendanceDay/save", attendanceController.createAttendanceDay);
 
 //-----------------------------TEACHER-----------------------------//
 app.get("/teacher/", teacherController.getAllTeacher);
+app.get("/teacher/:id", teacherController.getAllTeacherById);
 app.post("/teacher/save", teacherController.createTeacher);
 
 //-----------------------------SALESFORCE-----------------------------//
