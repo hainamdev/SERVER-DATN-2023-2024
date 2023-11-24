@@ -4,7 +4,7 @@ const SalesforceConnection = require("../config/loginSalesforce");
 const returnResult = require("../utils/utilReturnData");
 class UsersController {
   constructor() {
-    this.defaultFields = "Id, Email__c, Phone__c, Password__c";
+    this.defaultFields = "Id, Email__c, Phone__c, Password__c, Name";
   }
 
   getAllUser = async (req, res) => {
@@ -263,6 +263,7 @@ class UsersController {
       }
       delete classInfo.records[0].attributes;
       rs.records[0] = { ...rs.records[0], Class:{Id: classInfo.records[0].ClassHeader__c} };
+    } else if (role.records[0].Title__c === "ADMIN") {
     }
     delete rs.records[0].attributes;
     return rs;
