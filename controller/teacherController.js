@@ -100,8 +100,11 @@ class LessonController {
         teacher.Password__c = encryptedPassword;
       }
       if(teacher.Id) {
+        const id = teacher.Id;
+        teacher.Id = teacher.IdUser;
+        delete teacher.IdUser;
         const newTeacherCreate = await salesforce
-        .sobject("Teacher__c")
+        .sobject("Users__c")
         .update(teacher, function (err, ret) {
           if (err) {
             return { error: err };
@@ -111,6 +114,19 @@ class LessonController {
         return res
           .status(500)
           .send("Internal Server Error: " + newTeacherCreate.error);
+        if(teacher?.UserName__c){
+          const newTeacherCreate02 = await salesforce
+          .sobject("Teacher__c")
+          .update({Id : id, Name: teacher.UserName__c}, function (err, ret) {
+            if (err) {
+              return { error: err };
+            }
+          });
+          if (newTeacherCreate02?.error)
+          return res
+            .status(500)
+            .send("Internal Server Error: " + newTeacherCreate02.error);
+        }
       } else {
         const newUser = await salesforce
         .sobject("Users__c")
@@ -163,6 +179,7 @@ class LessonController {
       }
       res.json(teacher);
     } catch (err) {
+      console.log(err);
       return res.status(500).send("error: " + err.errorCode);
     }
   };
