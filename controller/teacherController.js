@@ -1,5 +1,7 @@
 const SalesforceConnection = require("../config/loginSalesforce");
 const returnResult = require("../utils/utilReturnData");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 class LessonController {
   constructor() {
     // SELECT Id, Name, MaGiaoVien__c, Users__c FROM Teacher__c
@@ -93,6 +95,10 @@ class LessonController {
     try {
       const salesforce = await SalesforceConnection.getConnection();
       let teacher = {...req.body};
+      if(teacher?.Password__c){
+        var encryptedPassword = await bcrypt.hash(teacher.Password__c, 10);
+        teacher.Password__c = encryptedPassword;
+      }
       if(teacher.Id) {
         const newTeacherCreate = await salesforce
         .sobject("Teacher__c")
