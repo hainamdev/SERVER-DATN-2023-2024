@@ -125,6 +125,24 @@ class LessonController {
           .status(500)
           .send("Internal Server Error: " + newUser.error);
 
+        let userRole = { 
+          Role__c : 'a035j00000Tf08IAAR', 
+          Users__c : teacher.Id
+        };
+
+        const roleCreate = await salesforce
+        .sobject("UserRole__c")
+        .create(userRole, function (err, ret) {
+          if (err) {
+            return { error: err };
+          }
+          return ret.id;
+        });
+        if (roleCreate?.error)
+        return res
+          .status(500)
+          .send("Internal Server Error: " + roleCreate.error);
+
         const newTeacherCreate = await salesforce
         .sobject("Teacher__c")
         .create({Name: teacher.UserName__c, Users__c: teacher.Id}, function (err, ret) {

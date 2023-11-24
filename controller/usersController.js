@@ -202,11 +202,14 @@ class UsersController {
           return result;
         }
       );
-      if (!classInfo || classInfo.error) {
+      if (!classInfo || classInfo?.error) {
         return classInfo.error ? classInfo : { error: " " };
+      } else {
+        if(classInfo?.records[0]?.attributes) {
+          delete classInfo?.records[0]?.attributes;
+        }
+        rs.records[0] = { ...rs.records[0], Class: classInfo?.records[0] };
       }
-      delete classInfo.records[0].attributes;
-      rs.records[0] = { ...rs.records[0], Class: classInfo.records[0] };
     } else if (role.records[0].Title__c === "PARENT") {
       let parent = await salesforce.query(
         `SELECT Id, Name FROM Parent__c WHERE Users__c  = '${rs.records[0].Id}'`,
