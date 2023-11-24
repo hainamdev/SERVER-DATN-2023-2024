@@ -93,22 +93,53 @@ class LessonController {
     try {
       const salesforce = await SalesforceConnection.getConnection();
       let teacher = {...req.body};
-      const newTeacherCreate = await salesforce
+      if(teacher.Id) {
+        const newTeacherCreate = await salesforce
         .sobject("Teacher__c")
+        .update(teacher, function (err, ret) {
+          if (err) {
+            return { error: err };
+          }
+        });
+        if (newTeacherCreate?.error)
+        return res
+          .status(500)
+          .send("Internal Server Error: " + newTeacherCreate.error);
+      } else {
+        const newUser = await salesforce
+        .sobject("Users__c")
         .create(teacher, function (err, ret) {
           if (err) {
             return { error: err };
           }
           teacher.Id = ret.id;
         });
-      if (newTeacherCreate?.error)
+        if (newUser?.error)
+        return res
+          .status(500)
+          .send("Internal Server Error: " + newUser.error);
+
+        const newTeacherCreate = await salesforce
+        .sobject("Teacher__c")
+        .create({Name: teacher.UserName__c, Users__c: teacher.Id}, function (err, ret) {
+          if (err) {
+            return { error: err };
+          }
+          teacher = {
+            User: {...teacher},
+            Name: teacher.UserName__c,
+            Users__c: teacher.Id,
+            Id: ret.id
+          };
+        });
+        if (newTeacherCreate?.error)
         return res
           .status(500)
           .send("Internal Server Error: " + newTeacherCreate.error);
-      console.log(newTeacherCreate);
+      }
       res.json(teacher);
     } catch (err) {
-      console.log(err);
+      return res.status(500).send("error: " + err.errorCode);
     }
   };
 }
