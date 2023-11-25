@@ -41,7 +41,6 @@ class ParentController {
               tmp.User = {
                 ...us
               }
-              console.log(tmp);
             });
           }
         );
@@ -104,17 +103,44 @@ class ParentController {
         parent.Password__c = encryptedPassword;
       }
       if(parent.Id) {
-        const newParentCreate = await salesforce
-        .sobject("Parent__c")
+        const id = parent.Id;
+        parent.Id = parent.IdUser;
+        delete parent.IdUser;
+        const newparentCreate = await salesforce
+        .sobject("Users__c")
         .update(parent, function (err, ret) {
           if (err) {
             return { error: err };
           }
         });
-        if (newParentCreate?.error)
+        if (newparentCreate?.error)
         return res
           .status(500)
-          .send("Internal Server Error: " + newParentCreate.error);
+          .send("Internal Server Error: " + newparentCreate.error);
+
+        if(parent?.UserName__c || parent?.Type__c){
+          var obj = {
+            Id : id
+          };
+          if(parent?.UserName__c){
+            obj.Name = parent.UserName__c;
+          }
+          if(parent?.Type__c){
+            obj.Type__c = parent?.Type__c;
+          }
+          console.log(obj);
+          const newparentCreate02 = await salesforce
+          .sobject("Parent__c")
+          .update(obj, function (err, ret) {
+            if (err) {
+              return { error: err };
+            }
+          });
+          if (newparentCreate02?.error)
+          return res
+            .status(500)
+            .send("Internal Server Error: " + newparentCreate02.error);
+        }
       } else {
         const newUser = await salesforce
         .sobject("Users__c")
