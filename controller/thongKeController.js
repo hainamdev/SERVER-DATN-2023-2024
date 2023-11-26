@@ -110,11 +110,23 @@ class ThongKeController {
             }
           }
         });
+
+        result.avg_score = [];
+
+        score.forEach((item) => {
+          if(item.EvaluationType__c !== 'TALENT'){
+            let scoreBySubject = score.filter((sc) => sc.Subject__c === item.Subject__c);
+            const sum = scoreBySubject.reduce((currentValue, sc) => sc.Score__c + currentValue, 0);
+            result.avg_score.push({
+              Subject__c : item.Subject__c,
+              avg : (sum / scoreBySubject.length).toFixed(2)
+            });
+          }
+        })
       }
       res.json(result);
     } catch (err) {
       console.log(err);
-      
     }
   };
 }
