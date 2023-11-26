@@ -15,6 +15,7 @@ const scheduleController = require("./controller/scheduleController");
 const attendanceController = require("./controller/attendanceController");
 const teacherController = require("./controller/teacherController");
 const parentController = require("./controller/parentController");
+const thongKeController = require("./controller/thongKeController");
 // const io = require('socket.io')
 
 app.use(express.urlencoded({ extended: true }));
@@ -98,6 +99,9 @@ app.post("/teacher/save", teacherController.createTeacher);
 app.get("/parent/", parentController.getAllParent);
 app.get("/parent/:id", parentController.getParentById);
 app.post("/parent/save", parentController.createParent);
+
+app.post("/thongke/score", thongKeController.getThongKeScore);
+
 
 //-----------------------------SALESFORCE-----------------------------//
 app.post("/notify/save-lesson-auto", (req, res) => {
