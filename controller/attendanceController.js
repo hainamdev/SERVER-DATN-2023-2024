@@ -4,7 +4,7 @@ class LessonController {
   constructor() {
     // SELECT Id, Name, CreatedDate, LastModifiedDate, ClassHeader__c, Date__c, Status__c FROM AttendanceDay__c
     this.defaultFields =
-      "Id, Name, CreatedDate, LastModifiedDate, ClassHeader__c, Date__c, Status__c ";
+      "Id, Name, CreatedDate, LastModifiedDate, ClassHeader__c, Date__c, Status__c, SL_DI_HOC__c,SL_PHEP__c, SL_KHONG_PHEP__c";
   }
 
   getAllAttendanceDayById = async (req, res) => {
@@ -70,22 +70,54 @@ class LessonController {
     try {
       const salesforce = await SalesforceConnection.getConnection();
       let attendanceDay = {...req.body};
-      const newAttendanceDayCreate = await salesforce
-        .sobject("AttendanceDay__c")
-        .create(attendanceDay, function (err, ret) {
-          if (err) {
-            return { error: err };
-          }
-          attendanceDay.Id = ret.id;
+      if(attendanceDay.Student && attendanceDay.Student.length){
+        const data = JSON.parse(JSON.stringify(attendanceDay));
+        delete data.Student;
+        const newAttendanceDayCreate = await salesforce
+          .sobject("AttendanceDay__c")
+          .create(data, function (err, ret) {
+            if (err) {
+              return { error: err };
+            }
+            attendanceDay.Id = ret.id;
+          });
+        if (newAttendanceDayCreate?.error)
+          return res
+            .status(500)
+            .send("Internal Server Error: " + newAttendanceDayCreate.error);
+        console.log(newAttendanceDayCreate);
+
+        attendanceDay.Student.forEach((item) => {
+          item.AttendanceDay__c = attendanceDay.Id;
         });
-      if (newAttendanceDayCreate?.error)
+
+        const newAttendanceLineCreate = await salesforce
+          .sobject("AttendanceLine__c")
+          .create(attendanceDay.Student, function (err, rets) {
+            if (err) {
+              return { error: err };
+            }
+            attendanceDay.Student.forEach((item, index) => {
+              item.Id = rets[index].id;
+            });
+          });
+        if (newAttendanceLineCreate?.error)
+          return res
+            .status(500)
+            .send("Internal Server Error: " + newAttendanceLineCreate.error);
+        console.log(newAttendanceLineCreate);
+
+        res.json(attendanceDay);
+      } else {
         return res
-          .status(500)
-          .send("Internal Server Error: " + newAttendanceDayCreate.error);
-      console.log(newAttendanceDayCreate);
-      res.json(attendanceDay);
+        .status(500)
+        .send("NO_STUDENT");
+      }
     } catch (err) {
       console.log(err);
+      return res
+      .status(500)
+      .send("Internal Server Error: " + err);
     }
   };
   // getLessonWeek = async (req, res) => {
