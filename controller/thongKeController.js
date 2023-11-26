@@ -113,15 +113,29 @@ class ThongKeController {
 
         result.avg_score = [];
 
-        score.forEach((item) => {
-          if(item.EvaluationType__c !== 'TALENT'){
-            let scoreBySubject = score.filter((sc) => sc.Subject__c === item.Subject__c);
-            const sum = scoreBySubject.reduce((currentValue, sc) => sc.Score__c + currentValue, 0);
-            result.avg_score.push({
-              Subject__c : item.Subject__c,
-              avg : (sum / scoreBySubject.length).toFixed(2)
+        var query_02 = `SELECT Id, Name, SubjectGroup__c, MaMonHoc__c FROM Subject__c where SubjectGroup__c = null`;
+        // console.log(query);
+        let subject = await salesforce.query(query_02,
+          (error, result) => {
+            if (error) {
+              return [];
+            }
+            result.records.forEach(async (ls) => {
+              delete ls.attributes;
             });
+            return result.records;
           }
+        );
+
+        subject.forEach((item) => {
+            let scoreBySubject = score.filter((sc) => sc.Subject__c === item.Id);
+            if(scoreBySubject && scoreBySubject.length) {
+              const sum = scoreBySubject.reduce((currentValue, sc) => sc.Score__c + currentValue, 0);
+              result.avg_score.push({
+                ...item,
+                avg : (sum / scoreBySubject.length).toFixed(2)
+              });
+            }
         })
       }
       res.json(result);
