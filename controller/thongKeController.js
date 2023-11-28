@@ -143,5 +143,70 @@ class ThongKeController {
       console.log(err);
     }
   };
+
+  getThongKeAttendance = async (req, res) => {
+    try {
+      const salesforce = await SalesforceConnection.getConnection();
+      const data = req.body;
+      data.from = data.from && data.from != null ? data.from : new Date();
+      data.to = data.to && data.to != null ? data.to : new Date();
+      let listIDEvaluation = [];
+      let result = {
+        total : 0,
+        numPhep: 0,
+        numKhongPhep: 0
+      };
+
+      let eva = await salesforce.query(
+        `SELECT Id, Name, CreatedDate, LastModifiedDate, ClassHeader__c, Date__c, Status__c 
+          FROM AttendanceDay__c
+          WHERE Date__c >= ${data.from}
+            AND Date__c <= ${data.to}`,
+        (error, result) => {
+          if (error) {
+            return;
+          }
+          result.records.forEach(async (ls) => {
+            delete ls.attributes;
+            listIDEvaluation.push(ls.Id)
+          });
+          return result.records;
+          // res.json(result);
+        }
+      );
+      // console.log(listIDEvaluation);
+
+      if(listIDEvaluation.length > 0){
+        let score = [];
+        var query = `
+          SELECT Id, Name, CreatedDate, LastModifiedDate, AttendanceDay__c, HocSinh__c, Status__c, note__c 
+          FROM AttendanceLine__c
+          WHERE AttendanceDay__c IN ('${listIDEvaluation.join("', '")}')
+              AND Status__c != 'DI_HOC'
+        `;
+        // console.log(query);
+        score = await salesforce.query(query,
+          (error, result) => {
+            if (error) {
+              return [];
+            }
+            result.records.forEach(async (ls) => {
+              delete ls.attributes;
+            });
+            return result.records;
+          }
+        );
+
+        let scoreByEva = score.filter((sc) => sc.Status__c === 'PHEP');
+        let scoreByEva_02 = score.filter((sc) => sc.Status__c === 'KHONG_PHEP');
+        result.numPhep = scoreByEva.length;
+        result.numKhongPhep = scoreByEva_02.length;
+        result.total = result.numPhep  + result.numKhongPhep;
+      }
+      res.json(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 }
 module.exports = new ThongKeController();

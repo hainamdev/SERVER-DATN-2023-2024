@@ -54,10 +54,16 @@ app.get("/user/:id", usersController.getUserbyId);
 // lấy hoc sinh bằng Id Lớp
 app.get("/class/:id", classController.getHocSinhByIDLop);
 app.get("/class", classController.getAllLop);
+app.post("/class/save", classController.createLop);
+app.post("/class/delete", classController.deleteLop);
+app.post("/class/add-student", classController.addStudent);
 
 //-----------------------------STUDENT-----------------------------//
 // lấy hoc sinh bằng Id
 app.get("/student/:id", hocSinhController.getHocSinhByID);
+app.get("/student", hocSinhController.getHocSinhAll);
+app.post("/student/save", hocSinhController.createHocSinh);
+app.post("/student/delete", hocSinhController.deleteHocSinh);
 
 //-----------------------------LESSON-----------------------------//
 // lấy báo bài bằng Id lớp
@@ -101,6 +107,7 @@ app.get("/parent/:id", parentController.getParentById);
 app.post("/parent/save", parentController.createParent);
 
 app.post("/thongke/score", thongKeController.getThongKeScore);
+app.post("/thongke/attendance", thongKeController.getThongKeAttendance);
 
 
 //-----------------------------SALESFORCE-----------------------------//
