@@ -21,7 +21,7 @@ const thongKeController = require("./controller/thongKeController");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // app.use(cors());
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000", "https://master--clever-otter-ef3960.netlify.app"];
 
 // Config CORS
 app.use(
