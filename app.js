@@ -68,6 +68,7 @@ app.post("/student/delete", hocSinhController.deleteHocSinh);
 //-----------------------------LESSON-----------------------------//
 // lấy báo bài bằng Id lớp
 app.get("/lesson/:idLop", lessonController.getAllLessonByIdLop);
+app.get("/lesson/parent/:idLop", lessonController.getAllLessonByIdLop_02);
 app.get("/lesson/id/:id", lessonController.getAllLessonById);
 app.post("/lesson/save", lessonController.createLesson);
 app.post("/lesson/get-week", lessonController.getLessonWeek);

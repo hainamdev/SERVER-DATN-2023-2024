@@ -49,6 +49,28 @@ class LessonController {
     }
   };
 
+  getAllLessonByIdLop_02 = async (req, res) => {
+    try {
+      const salesforce = await SalesforceConnection.getConnection();
+      const idLop = req.params.idLop;
+      await salesforce.query(
+        `SELECT ${this.defaultFields} FROM Lesson__c WHERE Class__c = '${idLop}' AND Status__c = 'Accepted' ORDER BY LastModifiedDate DESC`,
+        (error, result) => {
+          if (error) {
+            // returnResult.returnError(error, res);
+            return;
+          }
+          result.records.forEach((ls) => {
+            delete ls.attributes;
+          });
+          returnResult.returnSuccess(result, res);
+        }
+      );
+    } catch (error) {
+      returnResult.returnError(error, res);
+    }
+  };
+
   deleteLesson = async (req, res) => {
     try {
       const salesforce = await SalesforceConnection.getConnection();
