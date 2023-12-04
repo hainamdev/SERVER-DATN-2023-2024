@@ -39,7 +39,6 @@ class ThongKeController {
           // res.json(result);
         }
       );
-
       if(listIDEvaluation.length > 0){
         let score = [];
         var query = `
@@ -64,7 +63,7 @@ class ThongKeController {
           let scoreByEva = score.filter((sc) => sc.Evaluation_Sheet__c === item.Id);
           // console.log(scoreByEva);
           // console.log(scoreByEva.length);
-          if(scoreByEva.length === 17){
+          if(scoreByEva.length > 0){
             result.total += 1;
             var valua = { 
               over9 : 0,
